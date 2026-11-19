@@ -126,7 +126,7 @@ function render(d) {
   d.items.forEach((it, i) => {
     const card = document.createElement("div"); card.className = "card";
     const th = document.createElement("div"); th.className = "thumb";
-    if (it.thumbnail) th.style.backgroundImage = `url("${it.thumbnail}")`;
+    if (it.thumbnail && /^https?:\/\//i.test(it.thumbnail)) th.style.backgroundImage = `url(${JSON.stringify(it.thumbnail)})`;
     if (it.duration) { const s = document.createElement("span"); s.className = "dur"; s.textContent = fmtDur(it.duration); th.appendChild(s); }
     const body = document.createElement("div"); body.className = "card-body";
     const t = document.createElement("div"); t.className = "card-title";
@@ -135,7 +135,7 @@ function render(d) {
     it.options.forEach((o, j) => {
       const b = document.createElement("button");
       b.className = "dl" + (j === 0 ? " primary" : "");
-      b.innerHTML = `⬇ ${o.label}`;
+      b.textContent = `⬇ ${o.label}`;
       b.onclick = () => download(o, it, b);
       opts.appendChild(b);
     });
@@ -148,13 +148,13 @@ function download(o, it, btn) {
   const name = (current.title || it.title || "media").slice(0, 60);
   let href;
   if (o.kind === "file") {
-    href = `${API}/api/file?src=${enc(o.src)}&sig=${o.sig}&ext=${o.ext}&name=${enc(name)}`;
+    href = `${API}/api/file?src=${enc(o.src)}&sig=${enc(o.sig)}&ext=${enc(o.ext)}&name=${enc(name)}`;
   } else {
-    href = `${API}/api/download?url=${enc(current.source)}&fmt=${o.fmt}&item=${it.index}`;
+    href = `${API}/api/download?url=${enc(current.source)}&fmt=${enc(o.fmt)}&item=${enc(it.index)}`;
   }
-  btn.classList.add("loading"); const old = btn.innerHTML; btn.innerHTML = "⏳ Memproses…";
+  btn.classList.add("loading"); const old = btn.textContent; btn.textContent = "⏳ Memproses…";
   const a = document.createElement("a"); a.href = href; a.rel = "noopener"; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => { btn.classList.remove("loading"); btn.innerHTML = old; }, o.kind === "file" ? 1500 : 6000);
+  setTimeout(() => { btn.classList.remove("loading"); btn.textContent = old; }, o.kind === "file" ? 1500 : 6000);
 }
 
 const enc = encodeURIComponent;

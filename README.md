@@ -26,6 +26,22 @@ docker run -p 8000:8000 -e ZENITH_SECRET=isi_bebas_acak zenith-copy
 
 Set `ZENITH_SECRET` ke string acak tetap, supaya tombol download gambar tidak kedaluwarsa saat server restart.
 
+### Environment variable
+
+| Nama | Default | Fungsi |
+|---|---|---|
+| `ZENITH_SECRET` | acak tiap start | Kunci tanda tangan link proxy file (**wajib di-set** saat hosting) |
+| `TRUST_PROXY` | `0` | Set `1` kalau di belakang proxy (Railway/Render/Fly) supaya rate limit pakai IP asli pengunjung |
+| `MAX_FILESIZE_MB` | `500` | Batas ukuran 1 file |
+| `MAX_DURATION_SEC` | `7200` | Batas durasi video (detik) |
+| `DOWNLOAD_TIMEOUT_SEC` | `600` | Batas waktu 1 proses download |
+| `MAX_CONCURRENT_DOWNLOADS` | `3` | Jumlah download yt-dlp yang boleh jalan bersamaan |
+| `MAX_CONCURRENT_INFO` | `5` | Jumlah pengambilan info yang boleh jalan bersamaan |
+| `ALLOW_GENERIC` | `0` | Set `1` untuk mengaktifkan extractor "generic" yt-dlp (situs tak dikenal). Dimatikan default demi keamanan (anti-SSRF) |
+| `COOKIES_FILE` | – | Path cookies.txt (opsional) |
+
+Rate limit per IP: info 20/menit, download 8/menit, file 60/menit.
+
 ## Endpoint API (bisa dipakai juga dari app Flutter)
 
 | Method | Path | Fungsi |

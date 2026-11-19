@@ -4,6 +4,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-ENV PORT=8000
+# jalankan sebagai user biasa, bukan root
+RUN useradd --create-home --uid 10001 zenith && chown -R zenith:zenith /app
+USER zenith
+ENV PORT=8000 PYTHONUNBUFFERED=1
 EXPOSE 8000
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT}"]
